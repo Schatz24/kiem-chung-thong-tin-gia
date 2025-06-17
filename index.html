@@ -1,0 +1,262 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Giới thiệu và quảng bá sản phẩm mỹ phẩm an toàn, hiệu quả cho làn da.">
+    <title>Mỹ Phẩm - Giải Pháp Làn Da Hoàn Hảo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1.5rem;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #ff758c;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 1rem;
+            background-color: #fff;
+        }
+
+        .hero img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .products, .solutions, .contact {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .products h2, .solutions h2, .contact h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .product-card img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        .product-card h3 {
+            margin: 0.5rem 0;
+            color: #ff758c;
+        }
+
+        .solutions p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .contact form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .contact input, .contact textarea {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .contact button {
+            background-color: #ff758c;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .contact button:hover {
+            background-color: #ff4d7d;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            nav a {
+                margin: 0 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Mỹ Phẩm - Làn Da Hoàn Hảo</h1>
+        <p>Khám phá giải pháp làm đẹp tự nhiên và an toàn</p>
+    </header>
+    <nav>
+        <a href="#home">Trang Chủ</a>
+        <a href="#products">Sản Phẩm</a>
+        <a href="#solutions">Giải Pháp</a>
+        <a href="#contact">Liên Hệ</a>
+    </nav>
+    <section class="hero" id="home">
+        <h2>Chào Mừng Đến Với Thế Giới Làm Đẹp</h2>
+        <p>Các sản phẩm mỹ phẩm của chúng tôi giúp bạn tự tin với làn da khỏe đẹp.</p>
+        <img src="https://via.placeholder.com/600x300?text=Hình+Ảnh+Mỹ+Phẩm" alt="Hình ảnh mỹ phẩm">
+    </section>
+    <section class="products" id="products">
+        <h2>Sản Phẩm Của Chúng Tôi</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200?text=Sản+Phẩm+1" alt="Sản phẩm 1">
+                <h3>Kem Dưỡng Ẩm</h3>
+                <p>Cấp ẩm sâu, phù hợp mọi loại da.</p>
+                <p><strong>Giá: 350.000 VNĐ</strong></p>
+            </div>
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200?text=Sản+Phẩm+2" alt="Sản phẩm 2">
+                <h3>Serum Vitamin C</h3>
+                <p>Làm sáng da, giảm thâm nám.</p>
+                <p><strong>Giá: 500.000 VNĐ</strong></p>
+            </div>
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200?text=Sản+Phẩm+3" alt="Sản phẩm 3">
+                <h3>Mặt Nạ Dưỡng Da</h3>
+                <p>Thư giãn và tái tạo làn da.</p>
+                <p><strong>Giá: 150.000 VNĐ</strong></p>
+            </div>
+        </div>
+    </section>
+    <section class="solutions" id="solutions">
+        <h2>Giải Pháp Cho Làn Da</h2>
+        <p>Chúng tôi cung cấp các sản phẩm được nghiên cứu kỹ lưỡng, sử dụng thành phần tự nhiên, an toàn cho mọi loại da. Các giải pháp của chúng tôi tập trung vào:</p>
+        <ul>
+            <li><strong>Dưỡng ẩm</strong>: Giữ làn da mềm mại, căng bóng.</li>
+            <li><strong>Làm sáng</strong>: Giảm thâm, cải thiện sắc tố da.</li>
+            <li><strong>Chống lão hóa</strong>: Giảm nếp nhăn, tăng độ đàn hồi.</li>
+        </ul>
+        <p>Hãy bắt đầu quy trình chăm sóc da của bạn ngay hôm nay với các sản phẩm được hàng ngàn khách hàng tin dùng!</p>
+    </section>
+    <section class="contact" id="contact">
+        <h2>Liên Hệ Với Chúng Tôi</h2>
+        <form id="contact-form">
+            <input type="text" name="name" placeholder="Họ và Tên" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <textarea name="message" placeholder="Tin nhắn của bạn" rows="5" required></textarea>
+            <button type="submit">Gửi Tin Nhắn</button>
+        </form>
+    </section>
+    <footer>
+        <p>© 2025 Mỹ Phẩm - Làn Da Hoàn Hảo. All rights reserved.</p>
+    </footer>
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>
